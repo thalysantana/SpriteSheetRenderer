@@ -1,0 +1,9 @@
+{
+  "name": "spritesheetrenderer.ts",
+  "displayName": "SpriteSheetRenderer",
+  "unity": "2022.3",
+  "description": "SpriteSheetRenderer",
+  "version": "1.0.0",
+    "dependencies": {
+    }
+}

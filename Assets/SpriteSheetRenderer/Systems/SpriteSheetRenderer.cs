@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
-public class SpriteSheetRenderer : ComponentSystem {
+public partial class SpriteSheetRenderer : SystemBase {
   private Mesh mesh;
   protected override void OnCreate() {
     mesh = MeshExtension.Quad();

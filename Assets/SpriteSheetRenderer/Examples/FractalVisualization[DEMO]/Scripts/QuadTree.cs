@@ -15,7 +15,7 @@ public class QuadTree {
       var color = UnityEngine.Random.ColorHSV(.35f, .85f);
       List<IComponentData> components = new List<IComponentData> {
         new Position2D { Value = bounds.xy },
-        new Scale { Value = bounds.z },
+        new LocalTransform() { Scale = bounds.z },
         new SpriteIndex { Value = UnityEngine.Random.Range(0, maxSprites) },
         new SpriteSheetAnimation { maxSprites = maxSprites, play = true, repetition = SpriteSheetAnimation.RepetitionType.Loop, samples = 10 },
         new SpriteSheetColor { color = new float4(color.r, color.g, color.b, color.a) }
@@ -39,7 +39,7 @@ public class QuadTree {
 
   private void UpdateEntityMatrix() {
     SpriteSheetManager.UpdateEntity(entity, new Position2D { Value = bounds.xy });
-    SpriteSheetManager.UpdateEntity(entity, new Scale { Value = bounds.z });
+    SpriteSheetManager.UpdateEntity(entity, new LocalTransform() { Scale = bounds.z });
   }
 
   public void Subdivide() {

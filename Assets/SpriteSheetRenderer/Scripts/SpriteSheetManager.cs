@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 public abstract class SpriteSheetManager {
@@ -17,6 +18,44 @@ public abstract class SpriteSheetManager {
     }
   }
 
+  public static Entity Instantiate(List<IComponentData> componentData, string spriteSheetName)
+  {
+    EntityArchetype archetype = EntityManager.CreateArchetype(
+      typeof(Position2D),
+      typeof(Rotation2D),
+      typeof(LocalTransform),
+      typeof(LifeTime),
+      //required params
+      typeof(SpriteIndex),
+      typeof(SpriteSheetAnimation),
+      typeof(SpriteSheetMaterial),
+      typeof(SpriteSheetColor),
+      typeof(SpriteMatrix),
+      typeof(BufferHook)
+    );
+
+    return Instantiate(archetype, componentData, spriteSheetName);
+  }
+  
+  public static Entity Instantiate(List<IComponentData> componentData, SpriteSheetAnimator animator)
+  {
+    EntityArchetype archetype = EntityManager.CreateArchetype(
+      typeof(Position2D),
+      typeof(Rotation2D),
+      typeof(LocalTransform),
+      typeof(LifeTime),
+      //required params
+      typeof(SpriteIndex),
+      typeof(SpriteSheetAnimation),
+      typeof(SpriteSheetMaterial),
+      typeof(SpriteSheetColor),
+      typeof(SpriteMatrix),
+      typeof(BufferHook)
+    );
+
+    return Instantiate(archetype, componentData, animator);
+  }
+  
   public static Entity Instantiate(EntityArchetype archetype, List<IComponentData> componentDatas, string spriteSheetName) {
     Entity e = EntityManager.CreateEntity(archetype);
     Material material = SpriteSheetCache.GetMaterial(spriteSheetName);
@@ -27,7 +66,7 @@ public abstract class SpriteSheetManager {
     var spriteSheetMaterial = new SpriteSheetMaterial { material = material };
     BufferHook bh = new BufferHook { bufferID = bufferID, bufferEnityID = DynamicBufferManager.GetEntityBufferID(spriteSheetMaterial) };
     EntityManager.SetComponentData(e, bh);
-    EntityManager.SetSharedComponentData(e, spriteSheetMaterial);
+    EntityManager.SetSharedComponentManaged(e, spriteSheetMaterial);
     return e;
   }
 
@@ -46,7 +85,7 @@ public abstract class SpriteSheetManager {
     EntityManager.SetComponentData(e, bh);
     EntityManager.SetComponentData(e, new SpriteSheetAnimation {  maxSprites = maxSprites , play = startAnim.playOnStart, samples = startAnim.samples, repetition = startAnim.repetition});
     EntityManager.SetComponentData(e, new SpriteIndex { Value = startAnim.startIndex });
-    EntityManager.SetSharedComponentData(e, spriteSheetMaterial);
+    EntityManager.SetSharedComponentManaged(e, spriteSheetMaterial);
     animator.managedEntity = e;
     SpriteSheetCache.entityAnimator.Add(e, animator);
     return e;
@@ -67,7 +106,7 @@ public abstract class SpriteSheetManager {
       bufferID = DynamicBufferManager.AddDynamicBuffers(DynamicBufferManager.GetEntityBuffer(material), material);
       BufferHook bh = new BufferHook { bufferID = bufferID, bufferEnityID = DynamicBufferManager.GetEntityBufferID(spriteSheetMaterial) };
 
-      EntityManager.SetSharedComponentData(e, spriteSheetMaterial);
+      EntityManager.SetSharedComponentManaged(e, spriteSheetMaterial);
       EntityManager.SetComponentData(e, bh);
     }
     EntityManager.SetComponentData(e, new SpriteSheetAnimation { maxSprites = animation.sprites.Length, play = animation.playOnStart, samples = animation.samples, repetition = animation.repetition, elapsedFrames = 0 });
@@ -91,7 +130,7 @@ public abstract class SpriteSheetManager {
       int bufferID = DynamicBufferManager.AddDynamicBuffers(DynamicBufferManager.GetEntityBuffer(material), material);
       BufferHook bh = new BufferHook { bufferID = bufferID, bufferEnityID = DynamicBufferManager.GetEntityBufferID(spriteSheetMaterial) };
 
-      commandBuffer.SetSharedComponent(e, spriteSheetMaterial);
+      commandBuffer.SetSharedComponentManaged(e, spriteSheetMaterial);
       commandBuffer.SetComponent(e, bh);
     }
     commandBuffer.SetComponent(e, new SpriteSheetAnimation { maxSprites = animation.sprites.Length, play = animation.playOnStart, samples = animation.samples, repetition = animation.repetition, elapsedFrames = 0 });
@@ -101,10 +140,10 @@ public abstract class SpriteSheetManager {
     MarkDirty<SpriteMatrix>(e, commandBuffer);
   }
 
-  public static void MarkDirty<T>(Entity e) where T : struct , IComponentData {
+  public static void MarkDirty<T>(Entity e) where T : unmanaged , IComponentData {
     EntityManager.SetComponentData(e, entityManager.GetComponentData<T>(e));
   }
-  public static void MarkDirty<T>(Entity e,EntityCommandBuffer ecb) where T : struct, IComponentData {
+  public static void MarkDirty<T>(Entity e,EntityCommandBuffer ecb) where T : unmanaged, IComponentData {
     ecb.SetComponent(e, entityManager.GetComponentData<T>(e));
   }
 

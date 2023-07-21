@@ -51,7 +51,7 @@ public static class DynamicBufferManager {
     );
     Entity e = EntityManager.CreateEntity(archetype);
     bufferEntities.Add(e);
-    EntityManager.SetSharedComponentData(e, material);
+    EntityManager.SetSharedComponentManaged(e, material);
     EntityManager.SetComponentData(e, new EntityIDComponent { id = materialEntityBufferID.Count });
     EntityManager.SetName(e, $"EntityBuffer[{materialEntityBufferID.Count}]");
     materialEntityBufferID.Add(material.material, materialEntityBufferID.Count);

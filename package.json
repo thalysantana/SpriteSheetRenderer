@@ -1,0 +1,13 @@
+{
+  "name": "com.notanocean.renderer",
+  "displayName": "DOTS Renderer",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "unityRelease": "0a16",
+  "description": "Spritesheet renderer for Unity DOTS",
+  "repository": {
+    "url": "https://github.com/thalysantana/SpriteSheetRenderer.git",
+    "type": "git",
+    "revision": "679e74278dc720cb5056d4d7300c8e7be7a0584a"
+  }
+}
